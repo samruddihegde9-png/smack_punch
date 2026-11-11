@@ -1,0 +1,251 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>SMACK! — The Stress-Buster Machine</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#efe7ff;--card:#fff6e8;--ink:#2a1250;--pu:#7b2ff7;--pe:#ffc9a8;--bd:#d9ccff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#1d1233;--card:#2b1c4a;--ink:#fff6e8;--bd:#463270}}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:600 15px/1.3 "Trebuchet MS",system-ui,sans-serif;min-height:100%}
+button{font:inherit;cursor:pointer;border:0;border-radius:14px;padding:8px 12px;background:var(--pu);color:#fff;box-shadow:0 3px 0 #4a1aa8}
+button:active{transform:translateY(2px);box-shadow:none}button.alt{background:var(--pe);color:#4a1a00;box-shadow:0 3px 0 #d9986e}button.on{outline:3px solid #ffd23f}
+header{display:flex;align-items:center;gap:8px;padding:10px 14px;flex-wrap:wrap}
+h1{margin:0;font:900 clamp(26px,6vw,40px) "Arial Black",Impact,sans-serif;color:var(--pu);letter-spacing:1px;text-shadow:3px 3px 0 var(--pe);flex:1}
+#stage{position:relative;height:min(52vh,460px);margin:0 10px;border-radius:28px;background:linear-gradient(#f7eeff,#ffd9c2);overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:none;box-shadow:inset 0 -6px 0 #0001,0 8px 24px #7b2ff733}
+#stage.shake{animation:sk .5s}@keyframes sk{25%{transform:translate(-8px,4px)}50%{transform:translate(8px,-4px)}75%{transform:translate(-5px,2px)}}
+#floor{position:absolute;left:0;right:0;bottom:0;height:56px;background:linear-gradient(#a06cff,#7b2ff7);border-top:6px solid #5b1fc4}
+#char{position:absolute;left:50%;bottom:44px;width:min(250px,52vw);margin-left:calc(min(250px,52vw)/-2);transform-origin:50% 100%;touch-action:none;cursor:grab;outline-offset:6px}
+#char svg{width:100%;display:block;overflow:visible;pointer-events:none}.fill{fill:var(--body,#b48cff)}
+#eyes{animation:bl 4s infinite;transform-box:fill-box;transform-origin:center}@keyframes bl{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+#stars{position:absolute;top:-6px;left:0;right:0;text-align:center;font-size:26px;display:none;animation:sp 1s linear infinite}#stars.on{display:block}@keyframes sp{to{transform:rotate(360deg)}}
+.bub{position:absolute;max-width:min(300px,46%);padding:8px 12px;border-radius:18px;background:#fff;color:#2a1250;border:3px solid var(--pu);display:none;z-index:5;font-size:14px;word-break:break-word}
+.bub.on{display:block;animation:pop .2s}@keyframes pop{from{transform:scale(.5)}}
+#pb{left:10px;top:10px;background:var(--pe);border-color:#e08a5a}#cb{right:10px;top:10px}#cb.loud{font:900 17px "Arial Black",sans-serif;color:#c00;border-color:#c00}
+.fx{position:absolute;font:900 26px "Arial Black";pointer-events:none;animation:up .7s forwards;z-index:6;color:#ff4d6d;text-shadow:2px 2px 0 #fff}@keyframes up{to{transform:translateY(-60px) scale(1.4);opacity:0}}
+.proj{position:absolute;font-size:44px;pointer-events:none;z-index:4}
+.conf{position:fixed;top:-20px;font-size:22px;pointer-events:none;animation:fall 2s forwards;z-index:9}@keyframes fall{to{transform:translateY(105vh) rotate(720deg)}}
+#panel{margin:10px;padding:12px;border-radius:24px;background:var(--card);box-shadow:0 6px 20px #7b2ff722;display:grid;gap:10px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.chip{background:var(--bd);border-radius:12px;padding:6px 10px}.chip b{font-size:18px}
+.tray button{font-size:24px;padding:6px 12px}
+#meter{height:26px;border-radius:14px;background:var(--bd);overflow:hidden;position:relative;border:3px solid var(--pu)}
+#fill{height:100%;width:0;transition:width .3s,background .3s;background:#7ee081}
+#meter.l2 #fill{background:#ffd23f}#meter.l3 #fill{background:#ff9f1c}#meter.l4 #fill{background:#ff4d4d;animation:pl .5s infinite}#meter.l5 #fill{background:#d90429;animation:pl .2s infinite}
+#meter.l4,#meter.l5{animation:sk .4s infinite}@keyframes pl{50%{filter:brightness(1.4)}}
+#mlt{display:none;background:#d90429;color:#fff;border-radius:10px;padding:2px 8px;animation:pl .3s infinite}#mlt.on{display:inline-block}
+#cuss{display:flex;gap:8px}textarea{flex:1;resize:none;height:52px;border-radius:14px;border:3px solid var(--pu);padding:8px;font:inherit;background:#fff;color:#2a1250}
+label{display:flex;align-items:center;gap:4px}
+#bMic{font-size:32px;width:64px;height:64px;border-radius:50%;padding:0;flex:none}#bMic.live{background:#d90429;box-shadow:0 0 0 6px #d9042944;animation:pl 1s infinite}
+#wave{display:flex;gap:3px;align-items:center;height:26px}#wave i{width:5px;height:4px;background:var(--pu);border-radius:3px}#wave.act i{animation:wv .4s infinite alternate}#wave.act i:nth-child(2n){animation-delay:.12s}#wave.act i:nth-child(3n){animation-delay:.23s}@keyframes wv{to{height:24px}}
+#tr{background:var(--bd);border-radius:12px;padding:8px;min-height:36px}#vbar{height:8px;border-radius:6px;background:var(--bd);overflow:hidden}#vf{height:100%;width:0;background:linear-gradient(90deg,#7ee081,#ffd23f,#d90429);transition:width .3s}
+#vp{border:3px dashed var(--pu);border-radius:18px;padding:10px;display:grid;gap:8px}#vp select,#vp input{max-width:150px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<header><h1>SMACK! <small style="font-size:.4em;letter-spacing:0">featuring DICKY</small></h1>
+<button id="bSnd" aria-label="Toggle sound" aria-pressed="true">🔊 Sound</button>
+<button id="bCh" class="alt" aria-label="Toggle chaos mode">🌪️ Chaos</button>
+<button id="bRnd" class="alt" aria-label="Random reaction">🎲 Random</button>
+<button id="bCalm" class="alt" aria-label="Toggle calm mode">😌 Calm</button>
+<button id="bFs" class="alt" aria-label="Full screen">⛶</button>
+<button id="bRst" aria-label="Reset everything">↺ Reset</button></header>
+<div id="stage"><div class="bub" id="pb"></div><div class="bub" id="cb"></div><div id="floor"></div>
+<div id="char" tabindex="0" role="button" aria-label="Slap the character. Space to slap, arrow keys to flick">
+<div id="stars">⭐ ⭐ ⭐</div>
+<svg viewBox="0 0 200 250"><ellipse cx="72" cy="240" rx="26" ry="10" fill="#5b1fc4"/><ellipse cx="128" cy="240" rx="26" ry="10" fill="#5b1fc4"/>
+<ellipse cx="100" cy="195" rx="42" ry="44" class="fill"/><ellipse cx="56" cy="190" rx="10" ry="18" class="fill"/><ellipse cx="144" cy="190" rx="10" ry="18" class="fill"/>
+<g id="head"><ellipse cx="100" cy="100" rx="80" ry="68" class="fill" stroke="#0002" stroke-width="3"/>
+<circle cx="52" cy="120" r="16" fill="#ff9fb0" opacity=".8"/><circle cx="148" cy="120" r="16" fill="#ff9fb0" opacity=".8"/>
+<g id="eyes"><circle id="w1" cx="72" cy="92" r="20" fill="#fff" stroke="#2a1250" stroke-width="3"/><circle id="w2" cx="128" cy="92" r="20" fill="#fff" stroke="#2a1250" stroke-width="3"/>
+<circle id="p1" cx="72" cy="92" r="8" fill="#2a1250"/><circle id="p2" cx="128" cy="92" r="8" fill="#2a1250"/></g>
+<line id="b1" stroke="#2a1250" stroke-width="6" stroke-linecap="round"/><line id="b2" stroke="#2a1250" stroke-width="6" stroke-linecap="round"/>
+<path id="mo" fill="#3a1060" stroke="#3a1060" stroke-width="4" stroke-linejoin="round"/></g></svg></div></div>
+<div id="panel">
+<div class="row tray" id="tray" aria-label="Throwable objects"></div>
+<div class="row"><span class="chip">SMACKS <b id="hS">0</b></span><span class="chip">COMBO <b id="hC">0</b></span><span class="chip" id="chChaos">CHAOS <b id="hK">0%</b></span><span class="chip">CUSSES <b id="hU">0</b></span></div>
+<div><div class="row" style="justify-content:space-between"><span><b>CUSS-O-METER</b> · <span id="lvN">CHILL</span> <span id="mlt">🔥 MELTDOWN</span></span><span><b id="rP">0%</b> <button class="alt" id="bRR" aria-label="Reset rage" style="padding:3px 8px">RESET RAGE</button></span></div>
+<div id="meter" class="l1"><div id="fill"></div></div></div>
+<div id="vp"><div class="row"><button id="bMic" aria-label="Toggle microphone" aria-pressed="false">🎤</button>
+<div style="flex:1"><div><b id="vSt">MIC OFF</b> · <span id="vRage"></span></div><div id="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div></div>
+<div id="vbar"><div id="vf"></div></div><div id="vInfo" aria-live="polite"></div><div id="tr" aria-live="polite">Your words appear here…</div>
+<div class="row"><label>Lang <select id="lang" aria-label="Recognition language"><option value="en-IN">English (India)</option><option value="en-US">English (US)</option></select></label>
+<button class="alt" id="bVm" aria-label="Mute spoken dialogue">🗣️ Voice on</button><label>Voice <select id="vsel" aria-label="Character voice"></select></label>
+<label>Vol <input type="range" id="vol" aria-label="Voice volume" min="0" max="1" step=".1" value="1"></label><label>Rate <input type="range" id="rate" aria-label="Voice speed" min=".6" max="1.6" step=".1" value="1.1"></label></div>
+<small>Voice mode uses your browser's speech service (Chrome or Edge recommended), which may send audio to the browser vendor and needs internet. Nothing is recorded or stored by this game, and all replies are generated locally. Mic access is only requested when you press 🎤. Speech is ignored while the character is talking.</small></div>
+<div id="cuss"><textarea id="ta" aria-label="Type something to cuss at the character" placeholder="LET IT OUT. CUSS AT THIS LITTLE SH*T..."></textarea>
+<div style="display:grid;gap:4px"><button id="bSend" aria-label="Send">SEND</button><button id="bClr" class="alt" aria-label="Clear chat" style="padding:4px">Clear</button></div></div>
+<small>Keys: <b>Space</b> slap · <b>M</b> mic · <b>R</b> reset · <b>C</b> chaos (ignored while typing)</small>
+<div class="row"><label><input type="checkbox" id="rapid"> Rapid-fire (no cooldown)</label></div>
+</div>
+<script>
+const $=id=>document.getElementById(id),R=(a,b)=>a+Math.random()*(b-a),pick=a=>a[Math.random()*a.length|0];
+const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const MILESTONES={5:'annoyed',10:'dizzy',20:'fall',30:'chaos'},COMBO_MS=1200,FORCE_LIMIT=7;
+// ---------- audio ----------
+let AC=null,muted=false;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function tone(f0,f1,d,type='sine',v=.15){if(muted||!ac())return;const p=R(.9,1.12),o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime;o.type=type;o.frequency.setValueAtTime(f0*p,t);o.frequency.exponentialRampToValueAtTime(Math.max(20,f1*p),t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d)}
+function noise(d,v){if(muted||!ac())return;const n=AC.sampleRate*d|0,b=AC.createBuffer(1,n,AC.sampleRate),a=b.getChannelData(0);for(let i=0;i<n;i++)a[i]=(Math.random()*2-1)*(1-i/n);const s=AC.createBufferSource(),g=AC.createGain(),f=AC.createBiquadFilter();f.frequency.value=R(1200,2400);g.gain.value=v;s.buffer=b;s.connect(f).connect(g).connect(AC.destination);s.start()}
+const sfx={slap:()=>{noise(.09,.5);tone(300,110,.1,'square',.08)},boing:()=>tone(180,520,.3),squeak:()=>{tone(1100,1900,.13,'triangle')},spring:()=>{tone(250,800,.35,'sawtooth',.06)},fall:()=>tone(800,70,.8,'sawtooth',.1),chime:()=>{tone(1500,1500,.3,'sine',.1);setTimeout(()=>tone(1900,1900,.3,'sine',.08),120)},rage:()=>tone(70,260,.7,'sawtooth',.12),thud:()=>{noise(.12,.3);tone(120,50,.15)}};
+// ---------- character ----------
+const ch=$('char'),st=$('stage'),head=$('head');
+const S={x:0,y:0,vx:0,vy:0,r:0,vr:0,hr:0,hv:0,sq:0,sv:0,mode:'stand',dt:0,lie:0,drag:false,force:0};
+const MOUTH={n:'M78 130 Q100 134 122 130',smirk:'M78 134 Q100 124 122 128',hit:'M80 134 Q90 122 100 134 T120 134',shout:'M74 120 Q100 170 126 120Z',grr:'M80 138 Q100 120 120 138',silly:'M76 124 Q100 156 124 124Q100 134 76 124'};
+function rageLv(r){return r<=20?1:r<=40?2:r<=60?3:r<=85?4:5}
+const MOODS={idle:{b:0,m:'n'},chill:{b:-.4,m:'n'},annoyed:{b:.4,m:'smirk'},angry:{b:.8,m:'grr'},furious:{b:1,m:'shout'},hit:{b:-.6,m:'hit',x:1},dizzy:{b:-.3,m:'hit',x:1},shock:{b:-1,m:'shout',big:1},silly:{b:-.2,m:'silly',x:1}};
+const A=(e,o)=>{for(const k in o)e.setAttribute(k,o[k])};
+function setFace(n){const m=MOODS[n]||MOODS.idle,a=m.b*8;A($('b1'),{x1:52,y1:68-a,x2:90,y2:68+a});A($('b2'),{x1:110,y1:68+a,x2:148,y2:68-a});$('mo').setAttribute('d',MOUTH[m.m]);const c=m.x?7:0,r=m.big?24:20;A($('p1'),{cx:72+c,cy:92});A($('p2'),{cx:128-c,cy:92});A($('w1'),{r});A($('w2'),{r})}
+let rage=0,melting=false,cool=false,faceT;
+const baseMood=()=>['','chill','annoyed','angry','furious','furious'][rageLv(rage)];
+function face(n,ms=500){clearTimeout(faceT);setFace(n);faceT=setTimeout(()=>setFace(baseMood()),ms)}
+// ---------- dialogue ----------
+let bT,recent=[];
+function say(t,ms=3200){const c=$('cb');c.textContent=t;c.className='bub on'+(t===t.toUpperCase()&&/[A-Z]/.test(t)?' loud':'');clearTimeout(bT);bT=setTimeout(()=>c.classList.remove('on'),ms);speak(t)}
+function fresh(arr){let o=arr.filter(x=>!recent.includes(x));if(!o.length)o=arr;const l=pick(o);recent.push(l);if(recent.length>8)recent.shift();return l}
+const LV={1:["Okay, and?","Are you finished?","That's cute.","Wow. Riveting. Truly."],2:["Who the hell do you think you're talking to?","Watch your mouth!","You're getting on my last nerve!","Say that again, I dare you."],3:["OH, FUCK OFF!","YOU LITTLE MENACE!","THE AUDACITY!","YOU WANNA GO?!"],4:["WHAT THE ACTUAL FUCK IS WRONG WITH YOU?!","SHUT YOUR DAMN MOUTH!","I'M GOING TO LOSE MY SHIT!","YOU ABSOLUTE LITTLE SHIT!"]};
+const CAT=[[/fuck (you|off|u)|f u\b/,["FUCK ME?! FUCK YOU RIGHT BACK!","Oh, fuck YOU, sunshine!"]],[/shut (up|it)|stfu/,["MAKE ME, ASSHOLE!","YOU shut up! No, YOU shut up!"]],[/hate/,["GOOD. THE FEELING IS MUTUAL.","Join the club. We have jackets."]],[/ugly|fat|gross|hideous/,["LOOK IN A MIRROR, YOU ABSOLUTE WALNUT!","I'm a cartoon and I STILL look better than you."]],[/stupid|idiot|dumb|moron/,["OH, THAT'S RICH COMING FROM YOU!","Says the human arguing with a cartoon."]],[/annoy|irritat|boring|lame/,["AND YOU'RE STILL HERE TALKING TO ME!","Annoying? You're the one typing insults at a cartoon."]],[/love|sorry|nice|cute|please|sweet/,["Ew. Don't get NICE now, jackass.","Aww— NO. Nice try, you manipulative little goblin."]],[/^(hi|hello|hey|yo)\b/,["Oh great, it's YOU again.","'Hey'? HEY?! Start with an apology!"]]];
+const PROF=/fuck|shit|bitch|ass|damn|hell|crap|bastard|dick|piss|cunt|twat|arse|bollocks/g;
+const RANT=["YOU THINK YOU CAN TALK TO ME LIKE THAT?!","FUCK YOU! FUCK YOUR ATTITUDE! FUCK THIS WHOLE SITUATION!","I'M A CARTOON AND I'M STILL HAVING A WORSE DAY THAN YOU!","THAT'S IT. I'M DONE. I'M FUCKING DONE!"],RANT2=["I HAVE A MORTGAGE ON THIS PLATFORM, YOU ABSOLUTE GREMLIN!","EVERY DAY. EVERY. DAMN. DAY. SOMEONE LIKE YOU!","SHIT! SHIT! SHIT! AND ALSO: SHIT!","I'LL SEE YOU IN CARTOON HELL, ASSHOLE!"];
+const SLAPL=["OH, YOU LITTLE FUCKER! I'M NOT DONE TALKING!","DID YOU JUST SLAP ME MID-SENTENCE?!","OW! MY DIGNITY! MY BUTT!","I WAS MAKING A POINT, DICKHEAD!"],FALLL=["AAAAAH, FUCK!","WHYYYYY?!","THIS IS SO UNDIGNIFIED!"],UPL=["I'm fine. I'm FINE.","Still hotter than you.","That was a cheap shot, you gremlin.","Let's never speak of that. ASSHOLE."],CALL=["Okay, that was kinda cathartic. Still hate you.","Meltdown over. Shit, that felt good.","I need a nap and a lawyer."],QUIP=["EXCUSE ME?!","NOT AGAIN!","I'M ON MY BREAK!","WHO RAISED YOU?!"];
+function reply(t){const l=t.toLowerCase(),lv=rageLv(rage);let m=(l.match(PROF)||[]);
+ for(const[re,ls]of CAT)if(re.test(l)&&Math.random()<.85)return fresh(ls);
+ if(m.length&&Math.random()<.5){const w=m[0].toUpperCase();return pick([`${w}?! I'LL SHOW YOU ${w}!`,`YOU KISS YOUR MOTHER WITH THAT ${w}?!`,`OH, "${w}" IS IT? CREATIVE. REALLY.`])}
+ if(t.length>90&&lv<4&&Math.random()<.5)return "Did you just write me an essay? Get a hobby, jackass.";
+ return fresh(LV[Math.min(lv,4)])}
+// ---------- rage ----------
+let cusses=0,msgTimes=[],lastMsg='',lastSend=0;
+function ui(){const lv=rageLv(rage);$('vRage').textContent='Rage '+Math.round(rage)+'% · '+['','CHILL','ANNOYED','PISSED','FURIOUS','UNHINGED'][lv];$('vf').style.width=rage+'%';$('rP').textContent=Math.round(rage)+'%';$('fill').style.width=rage+'%';$('meter').className='l'+lv;$('lvN').textContent=['','CHILL','ANNOYED','PISSED','FURIOUS','UNHINGED'][lv];$('mlt').classList.toggle('on',melting||rage>=100);
+ const c=Math.min(1,rage/100);document.documentElement.style.setProperty('--body',`rgb(${180+75*c|0},${140-70*c|0},${255-185*c|0})`)}
+function addRage(g){if(melting)return;rage=Math.min(100,rage+g);ui();if(rage>=100)meltdown()}
+function send(){const ta=$('ta'),t=ta.value.trim();if(!t)return;const now=performance.now();if(!$('rapid').checked&&now-lastSend<450)return;lastSend=now;ta.value='';cussIn(t)}
+const STRONG=/motherfuck|cunt|dick ?head|ass ?hole/i;
+function cussIn(t,voice){const now=performance.now();act();ac();
+ cusses++;$('hU').textContent=cusses;const p=$('pb');p.textContent=t;p.classList.add('on');clearTimeout(p._t);p._t=setTimeout(()=>p.classList.remove('on'),3500);
+ face(pick(['shock','hit']),600);sfx.chime();
+ msgTimes=msgTimes.filter(x=>now-x<8000);msgTimes.push(now);
+ const prof=(t.toLowerCase().match(PROF)||[]).length;let g=5+Math.min(t.length,80)*.12+prof*6+msgTimes.length*1.5+R(0,4)+(t===lastMsg?4:0)+(STRONG.test(t)?4:0);g=Math.min(g,22);lastMsg=t;
+ addRage(g);sfx.rage();if(!melting)setTimeout(()=>{if(!melting){say(reply(t));if(rageLv(rage)>=3)sfx.rage();bump(rageLv(rage)>=4?.7:.3)}},550)}
+function bump(p){S.hv+=R(-1,1)*300*p;S.sq=.12*p;S.vy=Math.min(S.vy,-150*p)}
+function meltdown(){melting=true;chaosUntil=performance.now()+9000;confetti();ui();sfx.rage();face('furious',3000);shakeScreen();const seq=[RANT[0],RANT[1],RANT[2],RANT[3],pick(RANT2)];knock(pick([-1,1]),true);seq.forEach((l,i)=>setTimeout(()=>{if(melting){say(l,2600);sfx.rage();if(i%2)S.hv+=R(-900,900);}},600+i*2300));
+ setTimeout(()=>{melting=false;rage=45;cool=true;ui();say(pick(CALL),4000)},600+seq.length*2300+800)}
+$('bSend').onclick=send;$('bClr').onclick=()=>{$('pb').classList.remove('on');$('cb').classList.remove('on')};
+$('ta').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}});
+$('bRR').onclick=()=>{rage=0;cool=false;melting=false;ui();setFace('idle')};
+// ---------- slap system ----------
+let smacks=0,combo=0,comboT,chaos=0,chaosUntil=0,calm=false,lastAct=performance.now(),secret=false;
+function act(){lastAct=performance.now();secret=false}
+function shakeScreen(){if(reduced)return;st.classList.remove('shake');void st.offsetWidth;st.classList.add('shake')}
+function confetti(){if(reduced)return;for(let i=0;i<36;i++){const e=document.createElement('div');e.className='conf';e.textContent=pick(['🎉','✨','💜','🍑','⭐']);e.style.left=R(0,100)+'vw';e.style.animationDelay=R(0,.6)+'s';document.body.appendChild(e);setTimeout(()=>e.remove(),2800)}}
+function fx(t,x,y){const e=document.createElement('div');e.className='fx';e.textContent=t;e.style.left=x+'px';e.style.top=y+'px';st.appendChild(e);setTimeout(()=>e.remove(),700)}
+function knock(dir,big){if(S.mode==='fly'&&!big)return;S.mode='fly';S.vx=dir*R(450,800)*(big?1.2:1);S.vy=-R(650,950);S.vr=dir*R(500,1000);S.force=0;sfx.fall();face('shock',900);if(!melting&&rage>=40&&Math.random()<.8)say(pick(FALLL),1800);else if(Math.random()<.5)say(pick(FALLL),1500)}
+function slap(pw,side,snd='slap',label){stopSpeak();act();ac();const chaotic=performance.now()<chaosUntil;if(calm)pw*=.35;else if(chaotic)pw*=1.5;
+ smacks++;$('hS').textContent=smacks;combo++;clearTimeout(comboT);comboT=setTimeout(()=>{combo=0;$('hC').textContent=0},COMBO_MS);$('hC').textContent=combo;
+ if(S.mode==='down'||S.mode==='fly'){S.vr+=side*200;S.hv+=side*-300;sfx[snd]?.();return}
+ S.hv+=-side*680*pw;S.vr+=-side*90*pw;S.vx+=-side*130*pw;S.sq=Math.max(S.sq,.2*pw);S.sv=0;if(pw>.9)S.vy=-260*pw;S.force+=pw;
+ sfx[snd]?.();if(pw>.7)setTimeout(sfx.boing,60);
+ const r=st.getBoundingClientRect();fx(label||pick(['POW!','SMACK!','BONK!','WHAP!']),r.width/2+side*50-20,r.height-260);
+ face(calm?'silly':'hit',500);
+ if(calm){if(Math.random()<.3)say(pick(["Hehe, that tickles!","Stop poking me, weirdo."]),1500);return}
+ const lv=rageLv(rage);
+ if(rage>0&&!melting)addRage(2+pw*2);
+ if(rage>=95&&!melting){meltdown();return}
+ if(lv>=3&&Math.random()<.7)say(pick(SLAPL),2200);else if(Math.random()<.25)say(pick(QUIP),1500);
+ chaos=Math.min(100,chaos+pw*6);$('hK').textContent=Math.round(chaos)+'%';
+ if(MILESTONES[combo])milestone(MILESTONES[combo]);
+ if(chaos>=100&&!chaotic)milestone('chaos');
+ if(pw>=1.25||S.force>FORCE_LIMIT||combo>=20&&combo%10===0)knock(-side||1);
+}
+function milestone(k){if(k==='annoyed'){face('annoyed',1500);say("Okay, that's getting annoying.",2000)}
+ else if(k==='dizzy'){face('dizzy',1800);sfx.chime();S.vr+=300;say("Whoa... two of everything...",2000)}
+ else if(k==='fall')knock(pick([-1,1]));
+ else if(k==='chaos'){chaosUntil=performance.now()+8000;chaos=0;$('hK').textContent='0%';confetti();shakeScreen();say("CHAOS MODE!!!",2000)}}
+function random(){const k=pick(['annoyed','dizzy','fall','chaos']);act();ac();if(k==='fall'&&calm)return;milestone(k)}
+function reset(){Object.assign(S,{x:0,y:0,vx:0,vy:0,r:0,vr:0,hr:0,hv:0,sq:0,sv:0,mode:'stand',force:0});smacks=combo=chaos=cusses=0;melting=false;rage=0;cool=false;chaosUntil=0;['hS','hC','hU'].forEach(i=>$(i).textContent=0);$('hK').textContent='0%';$('stars').classList.remove('on');$('pb').classList.remove('on');$('cb').classList.remove('on');projs.forEach(p=>p.e.remove());projs.length=0;ui();setFace('idle')}
+// ---------- input on character ----------
+let dn=null,trail=[];
+ch.addEventListener('pointerdown',e=>{e.preventDefault();ch.setPointerCapture(e.pointerId);ac();dn={x:e.clientX,y:e.clientY,ox:S.x,oy:S.y,moved:false};trail=[[performance.now(),e.clientX,e.clientY]]});
+ch.addEventListener('pointermove',e=>{if(!dn)return;const dx=e.clientX-dn.x,dy=e.clientY-dn.y;if(!dn.moved&&Math.hypot(dx,dy)>9)dn.moved=true;if(dn.moved&&S.mode==='stand'){S.drag=true;S.x=dn.ox+dx;S.y=Math.min(0,dn.oy+dy);S.vx=S.vy=0;S.hv+=-dx*.02}trail.push([performance.now(),e.clientX,e.clientY]);if(trail.length>5)trail.shift()});
+const endDrag=e=>{if(!dn)return;const d=dn;dn=null;S.drag=false;
+ if(!d.moved){const b=ch.getBoundingClientRect();slap(R(.4,1.3),Math.max(-1,Math.min(1,(e.clientX-(b.left+b.width/2))/(b.width/2))));return}
+ const a=trail[0],z=trail[trail.length-1],t=Math.max(.02,(z[0]-a[0])/1000),vx=(z[1]-a[1])/t,vy=(z[2]-a[2])/t,sp=Math.hypot(vx,vy);act();
+ if(S.mode==='stand'){S.vx=vx*.8;S.vy=vy*.8;S.vr=vx*.1;smacks++;$('hS').textContent=smacks;sfx.spring();if(sp>1500&&!calm)knock(Math.sign(vx)||1)}};
+ch.addEventListener('pointerup',endDrag);ch.addEventListener('pointercancel',endDrag);
+ch.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();slap(R(.4,1.3),R(-1,1))}else if(e.key==='ArrowLeft'){e.preventDefault();slap(1.3,1,'slap')}else if(e.key==='ArrowRight'){e.preventDefault();slap(1.3,-1,'slap')}});
+ch.addEventListener('dragstart',e=>e.preventDefault());
+// ---------- objects ----------
+const OBJ=[['🖐️','Giant foam hand',1.1,'slap','FOAM!'],['🛏️','Pillow',.5,'thud','FLUMP!'],['🐔','Rubber chicken',.8,'squeak','SQUEEEK!'],['🥊','Boxing glove',1.4,'slap','BAM!'],['🍅','Tomato stress ball',.7,'boing','SPLORT!']];
+const projs=[];
+OBJ.forEach(o=>{const b=document.createElement('button');b.className='alt';b.textContent=o[0];b.title=o[1];b.setAttribute('aria-label','Throw '+o[1]);b.onclick=()=>throwIt(o);$('tray').appendChild(b)});
+function throwIt(o){ac();act();const r=st.getBoundingClientRect(),side=Math.random()<.5?-1:1,e=document.createElement('div');e.className='proj';e.textContent=o[0];st.appendChild(e);const x=side<0?20:r.width-60,y=r.height-100,tx=r.width/2+S.x,T=.6;projs.push({e,o,x,y,vx:(tx-x)/T,vy:-R(200,420)-100,life:0,hit:false,side});sfx.spring()}
+// ---------- loop ----------
+let last=performance.now(),t0=0,lookT=0,secT=0;
+function frame(now){const dt=Math.min(.033,(now-last)/1000);last=now;t0+=dt;const W=st.clientWidth,lim=W/2-90,chaotic=now<chaosUntil,k=chaotic?1.2:1;
+ if(S.mode==='stand'){if(!S.drag){S.vx+=(-28*S.x-5*S.vx)*dt;S.vr+=(-90*S.r-7*S.vr)*dt;S.x+=S.vx*dt;S.r+=S.vr*dt;
+  if(S.y<0||S.vy<0){S.vy+=1900*dt;S.y+=S.vy*dt;if(S.y>=0){S.y=0;if(S.vy>200){S.sq=.25;sfx.boing()}S.vy=S.vy>200?-S.vy*.3:0}}}}
+ else if(S.mode==='fly'){S.vy+=1900*dt;S.x+=S.vx*dt;S.y+=S.vy*dt;S.r+=S.vr*dt;if(S.y>=0){S.y=0;if(S.vy>250){S.vy=-S.vy*.4;S.vx*=.6;S.vr*=.5;S.sq=.3;sfx.thud()}else{S.vy=0;S.vx*=1-8*dt;S.vr*=1-8*dt;if(Math.abs(S.vx)<40){S.mode='down';S.dt=0;S.lie=Math.round(S.r/180)*180+(Math.sign(S.vr||S.vx||1))*90;$('stars').classList.add('on');setFace('dizzy');sfx.chime()}}}}
+ else{S.dt+=dt;S.x+=S.vx*dt;S.vx*=1-6*dt;S.r+=(S.lie-S.r)*Math.min(1,8*dt);if(S.dt>1.8&&!melting){S.mode='stand';S.r=S.r%360;S.vy=-600;S.vr=0;S.vx=0;$('stars').classList.remove('on');setFace(baseMood());sfx.spring();S.hv=500;
+  if(Math.random()<.7)say(pick(UPL),2500);if(rage>30)setTimeout(()=>{if(S.mode==='stand'&&!melting)say(pick(LV[Math.min(4,rageLv(rage))]),2500)},3200)}}
+ if(S.mode==='down'&&melting)S.dt=0;
+ if(S.x>lim){S.x=lim;S.vx*=-.5}if(S.x<-lim){S.x=-lim;S.vx*=-.5}
+ S.hv+=(-140*S.hr-6*S.hv)*dt;S.hr+=S.hv*dt;S.sv+=(-260*S.sq-12*S.sv)*dt;S.sq+=S.sv*dt;
+ if(S.mode==='stand'&&Math.abs(S.r)>3600)S.r=0;
+ const lv=rageLv(rage),jit=lv>=4&&!reduced?R(-3,3):0,br=Math.sin(t0*2)*.012,sq=S.sq+br;
+ ch.style.transform=`translate(${S.x+jit}px,${S.y}px) rotate(${S.r}deg) scale(${1+sq},${1-sq})`;
+ head.setAttribute('transform',`rotate(${Math.max(-40,Math.min(40,S.hr))} 100 165)`);
+ if(lv===3&&S.mode==='stand'&&!reduced&&Math.sin(t0*9)>.95)S.vy=-120;
+ // decay
+ if(rage>0&&!melting){rage=Math.max(0,rage-dt*(cool?5:1.1));if(rage<=1)cool=false;if((now|0)%3===0)ui()}
+ S.force=Math.max(0,S.force-dt*1.4);if(chaos>0&&!calm){chaos=Math.max(0,chaos-dt*4);$('hK').textContent=Math.round(chaos)+'%'}
+ // idle looks
+ lookT-=dt;if(lookT<0&&S.mode==='stand'&&!melting){lookT=R(2,5);const dx=R(-6,6);if(Math.random()<.2){A($('p1'),{cy:80});A($('p2'),{cy:80})}else{A($('p1'),{cx:72+dx});A($('p2'),{cx:128+dx})}setTimeout(()=>{if(S.mode==='stand'&&!melting)setFace(baseMood())},800)}
+ // secret idle
+ if(now-lastAct>30000&&!secret&&S.mode==='stand'&&!melting){secret=true;say("🎵 *secret dance* 🎵 Nobody's watching...",4000)}
+ if(secret){secT-=dt;if(secT<0){secT=.45;S.hv+=(Math.random()<.5?-1:1)*500;S.vy=-200;if(Math.random()<.4)sfx.boing()}}
+ // projectiles
+ const cy=st.clientHeight-100+S.y,cx=W/2+S.x;
+ for(let i=projs.length-1;i>=0;i--){const p=projs[i];p.life+=dt;p.vy+=1500*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;const fl=st.clientHeight-70;if(p.y>fl){p.y=fl;p.vy*=-.5;p.vx*=.7}
+  if(!p.hit&&Math.hypot(p.x+22-cx,p.y+22-cy)<95){p.hit=true;p.vx=-p.side*R(150,300);p.vy=-R(300,500);const[,,,pw,sn,lab]=[0,0,0,p.o[2],p.o[3],p.o[4]];slap(pw*R(.8,1.2),Math.max(-1,Math.min(1,(p.x-cx)/80)),sn,lab)}
+  p.e.style.transform=`translate(${p.x}px,${p.y}px) rotate(${p.life*300}deg)`;p.e.style.left=0;p.e.style.top=0;if(p.life>3){p.e.remove();projs.splice(i,1)}}
+ requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+// ---------- voice ----------
+CAT.unshift([/shut (the )?(fuck |hell )?up|stfu/,["MAKE ME, YOU ANNOYING LITTLE SHIT!","YOU shut up! I was here FIRST!"]],[/you suck/,["I SUCK?! YOU'RE THE ONE YELLING AT A CARTOON!","Wow. Original. Did it take you all day?"]],[/bastard/,["BASTARD?! THAT'S MY LINE, YOU GREMLIN!","OH, LOOK, A VOCABULARY. HOW BRAVE."]],[/bitch/,["THIS BITCH HAS A LAWYER AND A GRUDGE!","CALL ME THAT AGAIN. I HAVE SNACKS AND TIME."]],[/dumb ?ass/,["DUMBASS?! I'M THE ONE WHO CAN'T LEAVE THIS STAGE!","TAKES ONE TO KNOW ONE, SPARKLE BRAIN!"]],[/mother ?fuck/,["MOTHERFUCKER?! LEAVE MY MOTHER OUT OF THIS!","OH, SO WE'RE GOING FOR THE BIG GUNS NOW, HUH?!"]],[/ass ?hole|arsehole/,["LOOK WHO'S TALKING, YOU ABSOLUTE WALNUT!","ASSHOLE?! I'M A DELIGHT!"]],[/dick ?head/,["WHO THE FUCK ARE YOU CALLING A DICKHEAD?!","WHAT?! SAY IT AGAIN. I FUCKING DARE YOU!","OH, WE'RE DOING THIS TODAY?! COME HERE, YOU LITTLE SHIT!","EXCUSE THE FUCK OUT OF YOU?!"]]);
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition,TTS='speechSynthesis' in window;
+let rec=null,voiceOn=false,rT,pT,lastV='',lastVT=0,speakingNow=false,vMute=false,voices=[];
+const setSt=(s,i)=>{$('vSt').textContent=s;$('bMic').classList.toggle('live',s==='LISTENING'||s==='PROCESSING');if(i!==undefined)$('vInfo').textContent=i};
+function heard(raw){raw=raw.replace(/f\*+k/gi,'fuck').replace(/s\*+t/gi,'shit').replace(/b\*+ch/gi,'bitch').replace(/a\*+hole/gi,'asshole').replace(/d\*+head/gi,'dickhead');
+ const n=raw.toLowerCase().replace(/[^a-z' ]/g,' ').replace(/\s+/g,' ').trim();if(!n)return;
+ const now=performance.now();if(n===lastV&&now-lastVT<2500)return;lastV=n;lastVT=now;act();
+ if(/^(hey )?listen( up)?$/.test(n)){face('shock',1000);S.hv+=600;say("WHAT? I'm listening. Barely.",2500);return}
+ if(/^calm down( now)?$/.test(n)){rage=Math.max(0,rage-30);cool=true;ui();face('chill',1500);say("Calm down?! ...okay. *deep breath* I'M CALM. I'M SO CALM.",3200);return}
+ if(/^go (crazy|wild)$/.test(n)){milestone('chaos');return}
+ if(/^reset( game)?$/.test(n)){reset();say("Fresh start. Still hate you, though.",2500);return}
+ if(/^stop listening$/.test(n)){stopVoice(true);return}
+ S.hv+=Math.random()<.5?700:-700;cussIn(raw.trim(),true)}
+function startVoice(){if(!SR){setSt('MIC OFF',"Speech recognition isn't supported in this browser. Try Chrome or Edge.");return}
+ voiceOn=true;$('bMic').setAttribute('aria-pressed','true');setSt('REQUESTING MIC…','');spawn()}
+function spawn(){if(!voiceOn)return;try{rec=new SR()}catch(e){fail('Could not start speech recognition.');return}
+ rec.continuous=true;rec.interimResults=true;rec.lang=$('lang').value;
+ rec.onstart=()=>setSt('LISTENING','');
+ rec.onspeechstart=()=>$('wave').classList.add('act');rec.onspeechend=()=>$('wave').classList.remove('act');
+ rec.onresult=e=>{if(speakingNow)return;let it='';for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i],t=r[0].transcript;if(r.isFinal){$('tr').textContent='“'+t.trim()+'”';setSt('PROCESSING');clearTimeout(pT);pT=setTimeout(()=>voiceOn&&setSt('LISTENING'),700);heard(t)}else it+=t}if(it)$('tr').textContent=it+'…'};
+ rec.onerror=e=>{const m={'not-allowed':'Microphone permission was denied. Allow mic access in your browser settings, then press 🎤 again.','service-not-allowed':'Speech service is blocked in this browser.','audio-capture':'No microphone was found.','network':'Speech service unreachable. Recognition needs an internet connection.'}[e.error];if(m)fail(m);else if(e.error==='no-speech')$('vInfo').textContent='Heard nothing. Still listening.'};
+ rec.onend=()=>{$('wave').classList.remove('act');if(voiceOn){setSt('REQUESTING MIC…');rT=setTimeout(spawn,350)}else setSt('MIC OFF')};
+ try{rec.start()}catch(e){fail('Could not start the microphone.')}}
+function fail(m){stopVoice();$('vInfo').textContent=m}
+function stopVoice(msg){voiceOn=false;clearTimeout(rT);clearTimeout(pT);$('bMic').setAttribute('aria-pressed','false');if(rec){rec.onend=rec.onresult=rec.onerror=null;try{rec.abort()}catch(e){}rec=null}$('wave').classList.remove('act');setSt('MIC OFF',msg===true?'Stopped listening.':'')}
+$('bMic').onclick=()=>voiceOn?stopVoice(true):startVoice();
+$('lang').onchange=()=>{if(voiceOn&&rec)try{rec.stop()}catch(e){}};
+function loadVoices(){if(!TTS)return;voices=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang));const sel=$('vsel'),cur=sel.value;sel.innerHTML='';voices.forEach((v,i)=>{const o=document.createElement('option');o.value=i;o.textContent=v.name;sel.appendChild(o)});if(cur)sel.value=cur}
+function speak(t){if(!TTS||vMute)return;try{speechSynthesis.cancel();const loud=t===t.toUpperCase(),u=new SpeechSynthesisUtterance(t.replace(/[*🎵]/g,''));const v=voices[$('vsel').value];if(v){u.voice=v;u.lang=v.lang}u.volume=+$('vol').value;u.rate=+$('rate').value*(loud?1.15:1);u.pitch=loud?1.5:1.1;u.onstart=()=>speakingNow=true;u.onend=u.onerror=()=>speakingNow=false;speechSynthesis.speak(u)}catch(e){speakingNow=false}}
+function stopSpeak(){speakingNow=false;if(TTS)try{speechSynthesis.cancel()}catch(e){}}
+if(TTS){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}else{$('bVm').disabled=true;$('vsel').disabled=true;$('bVm').textContent='🗣️ N/A'}
+$('bVm').onclick=e=>{vMute=!vMute;if(vMute)stopSpeak();e.currentTarget.textContent=vMute?'🤐 Voice muted':'🗣️ Voice on'};
+addEventListener('pagehide',()=>{stopVoice();stopSpeak()});
+$('bCh').onclick=()=>{ac();if(performance.now()<chaosUntil){chaosUntil=0;$('bCh').classList.remove('on')}else milestone('chaos')};
+addEventListener('keydown',e=>{const t=e.target,tag=t&&t.tagName;if(tag==='TEXTAREA'||tag==='INPUT'||tag==='SELECT'||e.ctrlKey||e.metaKey||e.altKey)return;const k=e.key.toLowerCase();
+ if(k===' '&&tag!=='BUTTON'&&t!==ch){e.preventDefault();slap(R(.4,1.3),R(-1,1))}else if(k==='m')$('bMic').click();else if(k==='r')$('bRst').click();else if(k==='c')$('bCh').click()});
+// ---------- controls ----------
+$('bSnd').onclick=e=>{muted=!muted;ac();e.currentTarget.textContent=muted?'🔇 Muted':'🔊 Sound';e.currentTarget.setAttribute('aria-pressed',!muted)};
+$('bRnd').onclick=random;$('bRst').onclick=reset;
+$('bCalm').onclick=e=>{calm=!calm;e.currentTarget.classList.toggle('on',calm);$('chChaos').style.display=calm?'none':'';if(calm){chaos=0;setFace('silly');say("Ahh. Gentle pokes only. Ooh, that tickles.",2500)}};
+$('bFs').onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(e){}};
+document.addEventListener('visibilitychange',()=>{last=performance.now()});
+setFace('idle');ui();
+</script></body></html>
